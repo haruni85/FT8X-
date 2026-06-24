@@ -148,6 +148,62 @@
     padding: 5px 10px;
   }
 
+  /* ===== サーバーアドレス ===== */
+  .server-box {
+    margin-top: 22px;
+    background: var(--bg);
+    border: 1px dashed var(--accent);
+    padding: 16px 18px;
+  }
+
+  .server-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+
+  .server-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .server-address {
+    flex: 1;
+    font-family: var(--font-pixel);
+    font-size: 14px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .copy-btn {
+    flex-shrink: 0;
+    font-family: var(--font-pixel);
+    font-size: 12px;
+    background: var(--ink);
+    color: var(--bg-panel);
+    border: none;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+
+  .copy-btn:hover {
+    background: var(--accent);
+  }
+
+  .copy-btn:active {
+    transform: scale(0.96);
+  }
+
+  .copy-btn.copied {
+    background: var(--accent);
+  }
+
   /* ===== リンクリスト ===== */
   .link-list {
     display: flex;
@@ -298,12 +354,20 @@
     <h2>ABOUT</h2>
     <p class="about-text">
       Minecraftをプレイしています。<br>
-      よくFHISMPで遊びます
+      よくFHISMPで遊びます。
     </p>
     <div class="tag-row">
       <span>Survival</span>
       <span>Build</span>
       <span>Java Edition</span>
+    </div>
+
+    <div class="server-box">
+      <div class="server-label">FHISMP Server Address</div>
+      <div class="server-row">
+        <code class="server-address" id="server-address">fhismp.aternos.me</code>
+        <button class="copy-btn" id="copy-btn" type="button" aria-label="サーバーアドレスをコピー">Copy</button>
+      </div>
     </div>
   </div>
 
@@ -344,6 +408,41 @@
   </footer>
 
 </div>
+
+<script>
+  // サーバーアドレスのコピー機能
+  (function setupCopyButton() {
+    const btn = document.getElementById('copy-btn');
+    const addressEl = document.getElementById('server-address');
+
+    btn.addEventListener('click', async () => {
+      const text = addressEl.textContent.trim();
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        // クリップボードAPIが使えない場合のフォールバック
+        const tmp = document.createElement('textarea');
+        tmp.value = text;
+        tmp.style.position = 'fixed';
+        tmp.style.opacity = '0';
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+      }
+
+      const originalText = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('copied');
+      }, 1500);
+    });
+  })();
+</script>
 
 </body>
 </html>
